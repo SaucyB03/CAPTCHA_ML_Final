@@ -1,0 +1,52 @@
+CS 254 Machine Learning 
+Project Proposal Report Format
+ 
+Below are guidelines on how to write-up your proposal report for the course project: 
+
+1. Introduction
+Motivate and abstractly describe the problem you are addressing and how you are addressing it. What is the problem? Why is it important? What is your basic approach? A short discussion of how it fits into related work in the area is also desirable. Summarize the basic results and conclusions that you will achieve. 
+
+2. Problem Definition and Algorithm 
+
+2.1 Task Definition
+Precisely define the problem you are addressing (i.e. formally specify the inputs and outputs). Elaborate on why this is an interesting and important problem. 
+
+2.3. Dataset
+Answer all the questions related to your dataset, such as: Describe your dataset? is your dataset available? is it labeled, or do you need an effort to label it (how? when ? how many samples do you need to label?)? Do you need special hardware to process your data? Etc …
+
+2.2 Algorithm Definition
+Describe in reasonable detail the algorithm you are using to address this problem. Explain your baseline system and justify the choice of the baseline system? Do you have the plan to use other techniques or do you want to extend or enhance the current baseline system? Elaborate here and discuss different scenarios that you might approach. A psuedocode description of the algorithm you are using is frequently useful.
+
+
+
+
+
+3. Experimental Evaluation 
+
+3.1 Methodology
+What are the criteria you are using to evaluate your method? What specific hypotheses do your experiment test? Describe the experimental methodology that you used, and why do you think it is the right way to measure the performance. What is the training/test data that was used, and why is it realistic or interesting? Exactly what performance data did you collect and how are you presenting and analyzing it? Comparisons to competing methods that address the same problem are useful. 
+
+3.2 Results
+Present the quantitative results of your baseline system experiments. Graphical data presentation such as graphs and histograms are frequently better than tables.
+
+3.3 Discussion
+Is your hypothesis supported? What conclusions do the results support the strengths and weaknesses of your method compared to other methods? How can the results be explained in terms of the underlying properties of the algorithm and/or the data? What is your target/goals to achieve by the end of the semester?
+
+4. Related Work
+Answer the following questions for each piece of related work that addresses the same or a similar problem. What are their problems and methods? How is your problem approach could be different or better?
+
+ 5. Next Steps
+Precisely describe your next steps toward the final project objectives and how you will approach them. Elaborate enough to recognize your next steps including methods, timeline, etc…
+Explicitly define the role of each student on the project, make sure that each student will develop or participate in developing a machine learning algorithm.
+
+
+
+5. Code and Dataset
+Share the code and the dataset (don’t share private datasets), describe in precise and clear steps how to reproduce the results you achieved. Sharing the code and the steps using GitHub or gitlab would be great and enough!
+
+6. Conclusion 
+
+Briefly summarize the important results and conclusions presented in the report. summarize the most important points illustrated by your work? summarize how will your results improve by enhancing the current approach or using different approaches. 
+
+Bilbiography 
+Be sure to include a standard, well-formatted, comprehensive bibliography with citations from the text referring to previously published papers in the scientific literature that you utilized or are related to your work. Include references to the public code that you used for your project.

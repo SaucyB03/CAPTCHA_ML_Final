@@ -5,3 +5,14 @@ Characters in question:
  4
  x
  p
+
+
+
+
+Process:
+- Remove background gradient
+- Isolate each character (can be done automatically)
+   - Set a threshold (190?) anything above = white, below=black
+- Train model for all characters
+- Train model on whole captacha
+- Create Presentation!

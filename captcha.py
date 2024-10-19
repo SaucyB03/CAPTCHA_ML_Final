@@ -5,17 +5,17 @@ import numpy
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-# import sklearn
-#
-# # sklearn utilities
-# from sklearn import datasets
-# from sklearn.model_selection import train_test_split
-# from sklearn.metrics import confusion_matrix, classification_report
-#
-# # sklearn models
-# from sklearn.tree import DecisionTreeClassifier
-# from sklearn.ensemble import RandomForestClassifier
-# import tensorflow as tf
+import sklearn
+
+# sklearn utilities
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix, classification_report
+
+# sklearn models
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+import tensorflow as tf
 
 import glob
 
@@ -32,40 +32,68 @@ print(images.shape)
 plt.imshow(images[0])
 plt.show()
 
-new_img = {}
+new_img = []
+names = []
+
+imagew = [30,55]
 
 for img in range(len(image_files)):
     temp = image_files[img][8:13]
-    new_img[temp] = []
+    names.append(temp[0])
+    new_img.append([])
     for h in range(images.shape[1]):
-        new_img[temp].append([])
-        for w in range(25,60):
+        for w in range(imagew[0], imagew[1]):
             if images[img][h][w][0] < IMG_THRESHHOLD/255:
-                new_img[temp][h].append(images[img][h][w][0])
+                new_img[img].append(images[img][h][w][0])
             else:
-                new_img[temp][h].append(1.0)
+                new_img[img].append(1.0)
     print("Image ", img+1, "/", len(images), " successfully converted to greyscale")
-#
 
+new_img = numpy.array(new_img)
+print(new_img.shape)
 
+# For outputting some of new_image's characters
 fig, axes = plt.subplots(4, 5, figsize=(10, 8))  # Adjust figsize as needed
 
-first_of_l = {}
-
-for file, img  in new_img.items():
-    if file[0] not in first_of_l:
-        first_of_l[file[0]] = img
 
 # Loop through the images and corresponding axes to display them
 for i, ax in enumerate(axes.flat):
-    keys = list(first_of_l.keys())
-    if len(keys) > i:
-        ax.imshow(first_of_l[keys[i]], cmap='gray')  # Display each image in grayscale
-        ax.set_title(keys[i],fontsize=10)
-    # ax.axis('off')  Hide the axis for a cleaner look
+    reshaped_image = np.reshape(new_img[i], (50, imagew[1] - imagew[0]))
+    ax.imshow(reshaped_image, cmap='gray', interpolation="nearest")  # Display each image in grayscale
 
 # Display the grid of images
 plt.tight_layout()  # Adjust layout to avoid overlap
 plt.show()
 
 
+
+# train_images, test_images, train_labels, test_labels = train_test_split()
+
+
+x_train, x_test, y_train, y_test = train_test_split(new_img, names, test_size = 0.25, random_state = 0)
+
+x_train = np.array(x_train)
+x_test = np.array(x_test)
+y_train = np.array(y_train)
+y_test = np.array(y_test)
+
+print("Training x:", x_train.shape,"y:", y_train.shape)
+print("Testing x:", x_test.shape,"y:", y_test.shape)
+
+# scores = []
+# for i in range(1, x_train.shape[0]):
+#     #add your code here.
+#     treeI = DecisionTreeClassifier(max_features = i)
+#     treeI.fit(x_train, y_train)
+#     scores.append(treeI.score(x_test, y_test))
+#
+# plt.plot(scores)
+
+tree = DecisionTreeClassifier()
+
+tree.fit(x_train, y_train)
+print(tree.score(x_test, y_test))
+
+forest = RandomForestClassifier()
+forest.fit(x_train, y_train)
+print(forest.score(x_test,y_test))

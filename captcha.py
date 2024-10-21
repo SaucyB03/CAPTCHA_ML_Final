@@ -15,20 +15,17 @@ from sklearn.metrics import confusion_matrix, classification_report
 # sklearn models
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
-import tensorflow as tf
+#import tensorflow as tf
 
 import glob
 
 
 IMG_THRESHHOLD = 170
 
-
+# Loads images, converts to numpy array, and displays
 image_files = glob.glob(os.path.join("samples", '*.png'))
-
 images = numpy.array([plt.imread(img) for img in image_files])
-
 print(images.shape)
-
 plt.imshow(images[0])
 plt.show()
 

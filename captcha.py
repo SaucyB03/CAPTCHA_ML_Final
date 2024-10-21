@@ -35,19 +35,28 @@ plt.show()
 new_img = []
 names = []
 
-imagew = [30,55]
+# imagew = [30,55]
+img_num = 0
 
 for img in range(len(image_files)):
     temp = image_files[img][8:13]
     names.append(temp[0])
     new_img.append([])
-    for h in range(images.shape[1]):
-        for w in range(imagew[0], imagew[1]):
-            if images[img][h][w][0] < IMG_THRESHHOLD/255:
-                new_img[img].append(images[img][h][w][0])
-            else:
-                new_img[img].append(1.0)
-    print("Image ", img+1, "/", len(images), " successfully converted to greyscale")
+    for w in range(images.shape[2]):
+        if w >= 30 and w < 150:
+            if w == 54 or w == 78 or w == 102 or w == 126:
+                new_img.append([])
+                img_num += 1
+            for h in range(images.shape[1]):
+                if images[img][h][w][0] < IMG_THRESHHOLD/255:
+                    new_img[img_num].append(images[img][h][w][0])
+                else:
+                    new_img[img_num].append(1.0)
+
+    print("Image ", img_num+1, "/", len(images)*5, " successfully converted to greyscale")
+    img_num += 1
+
+print(new_img[5199])
 
 new_img = numpy.array(new_img)
 print(new_img.shape)
@@ -58,7 +67,7 @@ fig, axes = plt.subplots(4, 5, figsize=(10, 8))  # Adjust figsize as needed
 
 # Loop through the images and corresponding axes to display them
 for i, ax in enumerate(axes.flat):
-    reshaped_image = np.reshape(new_img[i], (50, imagew[1] - imagew[0]))
+    reshaped_image = np.reshape(new_img[i], (24, 50))
     ax.imshow(reshaped_image, cmap='gray', interpolation="nearest")  # Display each image in grayscale
 
 # Display the grid of images
@@ -88,6 +97,7 @@ print("Testing x:", x_test.shape,"y:", y_test.shape)
 #     scores.append(treeI.score(x_test, y_test))
 #
 # plt.plot(scores)
+# plt.show()
 
 tree = DecisionTreeClassifier()
 

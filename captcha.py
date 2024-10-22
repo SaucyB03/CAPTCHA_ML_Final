@@ -44,19 +44,25 @@ imagew = [
     [90, 115],
     [110, 135]
     ]
+
+img_num = 0
+
 #Converts images to greyscale
 for img in range(len(image_files)):
     temp = image_files[img][8:13]
     names.append(temp[0])
     new_img.append([])
-    for h in range(images.shape[1]):
-        for a in range(5):
-            for w in range(imagew[a][0], imagew[a][1]):
+    for a in range(5):
+        new_img.append([])
+        img_num += 1
+        for w in range(imagew[a][0], imagew[a][1]):
+            for h in range(images.shape[1]):
                 if images[img][h][w][0] < IMG_THRESHHOLD/255:
-                    new_img[img].append(images[img][h][w][0])
+                    new_img[img_num].append(images[img][h][w][0])
                 else:
-                    new_img[img].append(1.0)
-    print("Image ", img+1, "/", len(images), " successfully converted to greyscale")
+                    new_img[img_num].append(1.0)
+    print("Image ", img_num+1, "/", len(images)*5, " successfully converted to greyscale")
+    img_num += 1
 
 new_img = numpy.array(new_img)
 print(new_img.shape)
@@ -73,7 +79,7 @@ for i, ax in enumerate(axes.flat):
         start_idx = x * 50 * (imagew[x][1] - imagew[x][0])
         end_idx = (x + 1) * 50 * (imagew[x][1] - imagew[x][0])
         # Reshape only the appropriate section of new_img[i]
-        reshaped_image = np.reshape(new_img[i][start_idx:end_idx], (50, imagew[x][1] - imagew[x][0]))
+        reshaped_image = np.reshape(new_img[i], (50, imagew[x][1] - imagew[x][0]))
         ax.imshow(reshaped_image, cmap='gray', interpolation="nearest")  # Display each image section in grayscale
 
 # Display the grid of images
@@ -95,14 +101,14 @@ y_test = np.array(y_test)
 print("Training x:", x_train.shape,"y:", y_train.shape)
 print("Testing x:", x_test.shape,"y:", y_test.shape)
 
-# scores = []
-# for i in range(1, x_train.shape[0]):
-#     #add your code here.
-#     treeI = DecisionTreeClassifier(max_features = i)
-#     treeI.fit(x_train, y_train)
-#     scores.append(treeI.score(x_test, y_test))
-#
-# plt.plot(scores)
+scores = []
+for i in range(1, x_train.shape[0]):
+    #add your code here.
+    treeI = DecisionTreeClassifier(max_features = i)
+    treeI.fit(x_train, y_train)
+    scores.append(treeI.score(x_test, y_test))
+
+plt.plot(scores)
 
 tree = DecisionTreeClassifier()
 

@@ -15,48 +15,48 @@ from sklearn.metrics import confusion_matrix, classification_report
 # sklearn models
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
-import tensorflow as tf
+#import tensorflow as tf
 
 import glob
 
 
 IMG_THRESHHOLD = 170
 
-
+# Loads images, converts to numpy array, and displays
 image_files = glob.glob(os.path.join("samples", '*.png'))
-
 images = numpy.array([plt.imread(img) for img in image_files])
-
 print(images.shape)
-
 plt.imshow(images[0])
 plt.show()
 
+
+# Processing the images
+
+#grayscale versions of images
 new_img = []
+#list of names of each image
 names = []
-
-# imagew = [30,55]
-img_num = 0
-
+#image width and height
+imagew = [
+    [30,55],
+    [50, 75],
+    [70, 95],
+    [90, 115],
+    [110, 135]
+    ]
+#Converts images to greyscale
 for img in range(len(image_files)):
     temp = image_files[img][8:13]
     names.append(temp[0])
     new_img.append([])
-    for w in range(images.shape[2]):
-        if w >= 30 and w < 150:
-            if w == 54 or w == 78 or w == 102 or w == 126:
-                new_img.append([])
-                img_num += 1
-            for h in range(images.shape[1]):
+    for h in range(images.shape[1]):
+        for a in range(5):
+            for w in range(imagew[a][0], imagew[a][1]):
                 if images[img][h][w][0] < IMG_THRESHHOLD/255:
-                    new_img[img_num].append(images[img][h][w][0])
+                    new_img[img].append(images[img][h][w][0])
                 else:
-                    new_img[img_num].append(1.0)
-
-    print("Image ", img_num+1, "/", len(images)*5, " successfully converted to greyscale")
-    img_num += 1
-
-print(new_img[5199])
+                    new_img[img].append(1.0)
+    print("Image ", img+1, "/", len(images), " successfully converted to greyscale")
 
 new_img = numpy.array(new_img)
 print(new_img.shape)
@@ -67,8 +67,14 @@ fig, axes = plt.subplots(4, 5, figsize=(10, 8))  # Adjust figsize as needed
 
 # Loop through the images and corresponding axes to display them
 for i, ax in enumerate(axes.flat):
-    reshaped_image = np.reshape(new_img[i], (24, 50))
-    ax.imshow(reshaped_image, cmap='gray', interpolation="nearest")  # Display each image in grayscale
+
+    for x in range(5):
+        # Calculate the start and end index for the current section
+        start_idx = x * 50 * (imagew[x][1] - imagew[x][0])
+        end_idx = (x + 1) * 50 * (imagew[x][1] - imagew[x][0])
+        # Reshape only the appropriate section of new_img[i]
+        reshaped_image = np.reshape(new_img[i][start_idx:end_idx], (50, imagew[x][1] - imagew[x][0]))
+        ax.imshow(reshaped_image, cmap='gray', interpolation="nearest")  # Display each image section in grayscale
 
 # Display the grid of images
 plt.tight_layout()  # Adjust layout to avoid overlap
@@ -97,7 +103,6 @@ print("Testing x:", x_test.shape,"y:", y_test.shape)
 #     scores.append(treeI.score(x_test, y_test))
 #
 # plt.plot(scores)
-# plt.show()
 
 tree = DecisionTreeClassifier()
 

@@ -16,3 +16,7 @@ Process:
 - Train model for all characters
 - Train model on whole captacha
 - Create Presentation!
+
+
+- Find MINIST dataset on handdrawn characters
+- Train model on the characters we need

@@ -29,21 +29,33 @@ print(images.shape)
 plt.imshow(images[0])
 plt.show()
 
+
+# Processing the images
+
+#grayscale versions of images
 new_img = []
+#list of names of each image
 names = []
-
-imagew = [30,55]
-
+#image width and height
+imagew = [
+    [30,55],
+    [50, 75],
+    [70, 95],
+    [90, 115],
+    [110, 135]
+    ]
+#Converts images to greyscale
 for img in range(len(image_files)):
     temp = image_files[img][8:13]
     names.append(temp[0])
     new_img.append([])
     for h in range(images.shape[1]):
-        for w in range(imagew[0], imagew[1]):
-            if images[img][h][w][0] < IMG_THRESHHOLD/255:
-                new_img[img].append(images[img][h][w][0])
-            else:
-                new_img[img].append(1.0)
+        for a in range(5):
+            for w in range(imagew[a][0], imagew[a][1]):
+                if images[img][h][w][0] < IMG_THRESHHOLD/255:
+                    new_img[img].append(images[img][h][w][0])
+                else:
+                    new_img[img].append(1.0)
     print("Image ", img+1, "/", len(images), " successfully converted to greyscale")
 
 new_img = numpy.array(new_img)
@@ -55,8 +67,14 @@ fig, axes = plt.subplots(4, 5, figsize=(10, 8))  # Adjust figsize as needed
 
 # Loop through the images and corresponding axes to display them
 for i, ax in enumerate(axes.flat):
-    reshaped_image = np.reshape(new_img[i], (50, imagew[1] - imagew[0]))
-    ax.imshow(reshaped_image, cmap='gray', interpolation="nearest")  # Display each image in grayscale
+
+    for x in range(5):
+        # Calculate the start and end index for the current section
+        start_idx = x * 50 * (imagew[x][1] - imagew[x][0])
+        end_idx = (x + 1) * 50 * (imagew[x][1] - imagew[x][0])
+        # Reshape only the appropriate section of new_img[i]
+        reshaped_image = np.reshape(new_img[i][start_idx:end_idx], (50, imagew[x][1] - imagew[x][0]))
+        ax.imshow(reshaped_image, cmap='gray', interpolation="nearest")  # Display each image section in grayscale
 
 # Display the grid of images
 plt.tight_layout()  # Adjust layout to avoid overlap

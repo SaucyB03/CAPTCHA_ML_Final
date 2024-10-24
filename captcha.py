@@ -117,7 +117,6 @@ print("Testing x:", x_test.shape,"y:", y_test.shape)
 # plt.plot(scores)
 
 tree = DecisionTreeClassifier()
-
 tree.fit(x_train, y_train)
 print(tree.score(x_test, y_test))
 

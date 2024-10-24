@@ -45,20 +45,14 @@ imagew = [
     [110, 135]
     ]
 
-chosen_chars = ['2','d','g']
-
 img_num = 0
 
 #Converts images to greyscale
 for img in range(len(image_files)):
     temp = image_files[img][8:13]
-
     for a in range(5):
         new_img.append([])
-        if temp[a] in chosen_chars:
-            names.append(True)
-        else:
-            names.append(False)
+        names.append(temp[a])
         for w in range(imagew[a][0], imagew[a][1]):
             for h in range(images.shape[1]):
                 if images[img][h][w][0] < IMG_THRESHHOLD/255:
@@ -78,8 +72,8 @@ fig, axes = plt.subplots(4, 5, figsize=(10, 8))  # Adjust figsize as needed
 
 
 # Loop through the images and corresponding axes to display them
+ind = 0
 for i, ax in enumerate(axes.flat):
-
     for x in range(5):
         # Calculate the start and end index for the current section
         start_idx = x * 50 * (imagew[x][1] - imagew[x][0])
@@ -87,6 +81,7 @@ for i, ax in enumerate(axes.flat):
         # Reshape only the appropriate section of new_img[i]
         reshaped_image = np.reshape(new_img[i], (imagew[x][1] - imagew[x][0], 50)).T
         ax.imshow(reshaped_image, cmap='gray', interpolation="nearest")  # Display each image section in grayscale
+        ax.set_title(names[i])
 
 # Display the grid of images
 plt.tight_layout()  # Adjust layout to avoid overlap
@@ -108,13 +103,16 @@ print("Training x:", x_train.shape,"y:", y_train.shape)
 print("Testing x:", x_test.shape,"y:", y_test.shape)
 
 # scores = []
-# for i in range(1, x_train.shape[0]):
+# for i in range(1, x_train.shape[0], 52):
+#     print("Iteration: ", i, ", Begin...")
 #     #add your code here.
-#     treeI = DecisionTreeClassifier(max_features = i)
+#     treeI = RandomForestClassifier(max_features = i)
 #     treeI.fit(x_train, y_train)
 #     scores.append(treeI.score(x_test, y_test))
+#     print("Iteration:", i, ", Complete.")
 #
 # plt.plot(scores)
+# plt.show()
 
 tree = DecisionTreeClassifier()
 tree.fit(x_train, y_train)

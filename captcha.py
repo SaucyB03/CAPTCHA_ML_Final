@@ -52,7 +52,7 @@ for img in range(len(image_files)):
     temp = image_files[img][8:13]
     names.append(temp[0])
     new_img.append([])
-    for a in range(5):
+    for a in range(4):
         new_img.append([])
         img_num += 1
         for w in range(imagew[a][0], imagew[a][1]):
@@ -111,7 +111,6 @@ for i in range(1, x_train.shape[0]):
 plt.plot(scores)
 
 tree = DecisionTreeClassifier()
-
 tree.fit(x_train, y_train)
 print(tree.score(x_test, y_test))
 

@@ -123,3 +123,34 @@ print(tree.score(x_test, y_test))
 forest = RandomForestClassifier()
 forest.fit(x_train, y_train)
 print(forest.score(x_test,y_test))
+
+max_features_range = min(52, x_train.shape[1])  # Limit max_features to a reasonable number
+
+# Each graph
+scores = []
+# Iterate over a valid range of max_features
+for i in range(1, max_features_range):
+    treeI = DecisionTreeClassifier(max_features=i)
+    treeI.fit(x_train, y_train)
+    scores.append(treeI.score(x_test, y_test))
+# Label and plot
+plt.plot(range(1, max_features_range), scores, label='Decision Tree Scores')
+plt.xlabel('Max Features')
+plt.ylabel('Accuracy')
+plt.title('Decision Tree Performance')
+plt.legend()
+plt.show()
+
+scores = []
+# Iterate over a valid range of max_features
+for i in range(1, max_features_range):
+    treeI = RandomForestClassifier(max_features=i)
+    treeI.fit(x_train, y_train)
+    scores.append(treeI.score(x_test, y_test))
+# Label and plot
+plt.plot(range(1, max_features_range), scores, label='Random Forest Scores')
+plt.xlabel('Max Features')
+plt.ylabel('Accuracy')
+plt.title('Random Forest Performance')
+plt.legend()
+plt.show()

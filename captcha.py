@@ -50,21 +50,23 @@ img_num = 0
 
 #Converts images to greyscale
 for img in range(len(image_files)):
-    temp = image_files[img][8:13]
-    for w in range(30, 135):
-        total_pix_density = 0
-        for h in range(images.shape[1]):
-            if images[img][h][w][0] < IMG_THRESHHOLD/255:
-                new_img[img_num].append(images[img][h][w][0])
+    gray_image = cv2.cvtColor(images[img], cv2.COLOR_BGR2GRAY)
+    _, binar = cv2.threshold(gray_image, IMG_THRESHHOLD / 255, 1, cv2.THRESH_BINARY)
+    new_img.append(binar)
 
-            else:
-                new_img[img_num].append(1)
 
-image = images[0].copy()
+edge = np.array(new_img[0].copy())
+plt.imshow(edge)
+plt.show()
+b_edge = edge.astype('uint8')
 
-contours, hierarchy = cv2.findContours(image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+image = np.array(images[0].copy())
+b_image = image.astype('uint8')
 
-cv2.imshow('Canny Edges After Contouring', edged)
+
+contours, hierarchy = cv2.findContours(b_edge, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+cv2.imshow('Canny Edges After Contouring', b_edge)
 cv2.waitKey(0)
 
 print("Number of Contours found = " + str(len(contours)))
@@ -77,36 +79,36 @@ cv2.imshow('Contours', image)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
-plt.show()
+# plt.show()
 
-for img in range(len(image_files)):
-    name = image_files[img][8:13]
-    new_img.append([])
-    for w in range(30, 135):
-        new_img[img].append([])
-        pixel_density = 0
-        for h in range(images.shape[1]):
-
-            if images[img][w][h][0] < IMG_THRESHHOLD / 255:
-                pixel_density += 1 - images[img][w][h][0]
-
-
-        if pixel_density < 10:
-            print("ok")
-            for h in range(images.shape[1]):
-                new_img[img][w-30].append([1,0,0])
-        else:
-            for h in range(images.shape[1]):
-                new_img[img][w-30].append(images[img][w][h])
-
-
-
-        img_num += 1
-        print("Image ", img_num, "/", len(images)*5, " successfully converted to greyscale")
-    # img_num += 1
-
-plt.imshow(new_img[0])
-plt.show()
+# for img in range(len(image_files)):
+#     name = image_files[img][8:13]
+#     new_img.append([])
+#     for w in range(30, 135):
+#         new_img[img].append([])
+#         pixel_density = 0
+#         for h in range(images.shape[1]):
+#
+#             if images[img][w][h][0] < IMG_THRESHHOLD / 255:
+#                 pixel_density += 1 - images[img][w][h][0]
+#
+#
+#         if pixel_density < 10:
+#             print("ok")
+#             for h in range(images.shape[1]):
+#                 new_img[img][w-30].append([1,0,0])
+#         else:
+#             for h in range(images.shape[1]):
+#                 new_img[img][w-30].append(images[img][w][h])
+#
+#
+#
+#         img_num += 1
+#         print("Image ", img_num, "/", len(images)*5, " successfully converted to greyscale")
+#     # img_num += 1
+#
+# plt.imshow(new_img[0])
+# plt.show()
 
 # new_img = numpy.array(new_img)
 # print(new_img.shape)

@@ -23,11 +23,13 @@ import glob
 
 IMG_THRESHHOLD = 170
 
+IMG_DEBUG_CHOICE = 0
+
 # Loads images, converts to numpy array, and displays
 image_files = glob.glob(os.path.join("samples", '*.png'))
 images = numpy.array([plt.imread(img) for img in image_files])
 print(images.shape)
-plt.imshow(images[0])
+plt.imshow(images[IMG_DEBUG_CHOICE])
 plt.show()
 
 
@@ -48,67 +50,130 @@ imagew = [
 
 img_num = 0
 
-#Converts images to greyscale
-for img in range(len(image_files)):
-    gray_image = cv2.cvtColor(images[img], cv2.COLOR_BGR2GRAY)
-    _, binar = cv2.threshold(gray_image, IMG_THRESHHOLD / 255, 1, cv2.THRESH_BINARY)
-    new_img.append(binar)
-
-
-edge = np.array(new_img[0].copy())
-plt.imshow(edge)
-plt.show()
-b_edge = edge.astype('uint8')
-
-image = np.array(images[0].copy())
-b_image = image.astype('uint8')
-
-
-contours, hierarchy = cv2.findContours(b_edge, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-cv2.imshow('Canny Edges After Contouring', b_edge)
-cv2.waitKey(0)
-
-print("Number of Contours found = " + str(len(contours)))
-
-# Draw all contours
-# -1 signifies drawing all contours
-cv2.drawContours(image, contours, -1, (0, 255, 0), 3)
-
-cv2.imshow('Contours', image)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+# #Converts images to greyscale
+# for img in range(len(image_files)):
+#     gray_image = cv2.cvtColor(images[img], cv2.COLOR_BGR2GRAY)
+#     _, binar = cv2.threshold(gray_image, IMG_THRESHHOLD / 255, 1, cv2.THRESH_BINARY)
+#     new_img.append(binar)
+#
+#
+# edge = np.array(new_img[0].copy())
+# plt.imshow(edge)
+# plt.show()
+# b_edge = edge.astype('uint8')
+#
+# image = np.array(images[0].copy())
+# b_image = image.astype('uint8')
+#
+#
+# contours, hierarchy = cv2.findContours(b_edge, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+#
+# cv2.imshow('Canny Edges After Contouring', b_edge)
+# cv2.waitKey(0)
+#
+# print("Number of Contours found = " + str(len(contours)))
+#
+# # Draw all contours
+# # -1 signifies drawing all contours
+# cv2.drawContours(image, contours, -1, (0, 255, 0), 3)
+#
+# cv2.imshow('Contours', image)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
 
 # plt.show()
+
+col_pix_totals = []
 
 # for img in range(len(image_files)):
-#     name = image_files[img][8:13]
-#     new_img.append([])
-#     for w in range(30, 135):
-#         new_img[img].append([])
-#         pixel_density = 0
-#         for h in range(images.shape[1]):
-#
-#             if images[img][w][h][0] < IMG_THRESHHOLD / 255:
-#                 pixel_density += 1 - images[img][w][h][0]
-#
-#
-#         if pixel_density < 10:
-#             print("ok")
-#             for h in range(images.shape[1]):
-#                 new_img[img][w-30].append([1,0,0])
-#         else:
-#             for h in range(images.shape[1]):
-#                 new_img[img][w-30].append(images[img][w][h])
-#
-#
-#
-#         img_num += 1
-#         print("Image ", img_num, "/", len(images)*5, " successfully converted to greyscale")
-#     # img_num += 1
-#
-# plt.imshow(new_img[0])
-# plt.show()
+img = 0
+img_d = IMG_DEBUG_CHOICE
+name = image_files[img][8:13]
+
+new_img.append([])
+for w in range(images.shape[2]):
+    pixel_density = 0
+    for h in range(images.shape[1]):
+        if w == 0:
+            new_img[img].append([])
+        if images[img_d][h][w][0] < IMG_THRESHHOLD / 255:
+            pixel_density += 2-images[img_d][h][w][0]*2
+
+    for h in range(images.shape[1]):
+        if images[img_d][h][w][0] < IMG_THRESHHOLD / 255:
+            new_img[img][h].append(0)
+        else:
+            new_img[img][h].append(1)
+    col_pix_totals.append(int(pixel_density))
+
+        # print("Image ", img, "/", len(images)*5, " successfully converted to greyscale")
+    # img_num += 1
+
+# each low point near the 20 mark is an image edge, if there are 2 low points add 10 to the second low
+avgs=[0]
+avgs.append(0)
+for i in range(1, len(col_pix_totals)-1):
+    deriv = (col_pix_totals[i-1] - col_pix_totals[i]) + (col_pix_totals[i] - col_pix_totals[i+1])
+    avgs.append(deriv)
+avgs.append(0)
+
+lows=[]
+lows.append(0)
+lows.append(0)
+for i in range(1, len(col_pix_totals)-2):
+    if col_pix_totals[i-1] >= col_pix_totals[i] <= col_pix_totals[i+1] and col_pix_totals[i-2] > col_pix_totals[i] < col_pix_totals[i+2]:
+        lows.append(avgs[i]*col_pix_totals[i])
+    elif col_pix_totals[i-1] == col_pix_totals[i+1] and col_pix_totals[i-2] > col_pix_totals[i] < col_pix_totals[i+2]:
+        lows.append(avgs[i] * col_pix_totals[i])
+
+    else:
+        lows.append(0)
+lows.append(0)
+lows.append(0)
+
+edges = []
+
+end = 0
+for i in range(125, images.shape[2]):
+    if col_pix_totals[i] <= 10:
+        end = i
+        break
+
+area = 10
+for i in range(len(col_pix_totals)):
+    if i == 30 or i == end:
+        edges.append(i)
+    elif i % 20 == 0 and (40 < i < end-10):
+        near = lows[i - area:i + area]
+        print("near: ", near)
+        close_vals = []
+        loc = []
+        for n in range(i - area, i + area):
+            if near[n-i+area] != 0:
+                close_vals.append(n)
+                loc.append(n)
+
+        vals = [lows[p] for p in close_vals]
+        print("i:",i, "| end: ",end)
+        print(vals)
+        print(loc)
+        print(loc[vals.index(max(vals))])
+        edges.append(loc[vals.index(max(vals))])
+
+for w in edges:
+    for h in range(images.shape[1]):
+        new_img[img][h][w] = 0
+
+plt.plot(col_pix_totals)
+plt.plot(avgs)
+plt.plot(lows)
+plt.plot(edges)
+plt.show()
+new_img = numpy.array(new_img)
+print(new_img.shape)
+print("show")
+plt.imshow(new_img[0])
+plt.show()
 
 # new_img = numpy.array(new_img)
 # print(new_img.shape)
